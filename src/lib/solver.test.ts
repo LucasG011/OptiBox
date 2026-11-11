@@ -4,13 +4,20 @@ import { solve } from './solver'
 const near = (a: number, b: number, tol = 0.15) => Math.abs(a - b) <= tol
 
 describe('solve', () => {
-  it('sem restrições retorna ótimo RSC (x=y/2, z=y/3)', () => {
+  it('sem restrições retorna ótimo RSC (x=z, y=2^(2/3)·V^(1/3))', () => {
     const r = solve({ volume: 1000 })
     expect(r.feasible).toBe(true)
-    expect(near(r.y, 18.2, 0.5)).toBe(true)
-    expect(near(r.x, 9.1, 0.5)).toBe(true)
-    expect(near(r.z, 6.1, 0.5)).toBe(true)
+    expect(near(r.x, 7.94, 0.3)).toBe(true)
+    expect(near(r.y, 15.87, 0.5)).toBe(true)
+    expect(near(r.z, 7.94, 0.3)).toBe(true)
     expect(near(r.x * r.y * r.z, 1000, 15)).toBe(true)
+  })
+
+  it('max não vinculante não altera o ótimo', () => {
+    const r = solve({ volume: 1000, x: { max: 20 } })
+    expect(r.feasible).toBe(true)
+    expect(near(r.y, 15.87, 0.5)).toBe(true)
+    expect(near(r.areaCm2, 755.95, 6)).toBe(true)
   })
 
   it('dimensão fixa respeitada', () => {

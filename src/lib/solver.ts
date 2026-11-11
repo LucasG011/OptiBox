@@ -106,10 +106,11 @@ export function solve(input: SolveInput): SolveResult {
     if (a < bestArea) { bestArea = a; best = dims }
   }
 
-  // caso fechado: nenhum clamp, sem fixed → mínimo de 2(x+z)y+4xz: y=k, x=k/2, z=k/3, k=∛(6V)
+  // caso fechado: nenhum clamp, sem fixed → mínimo de 2(x+z)y+4xz:
+// ∂/∂x e ∂/∂z dão x²z=xz²=V/2 → x=z=(V/2)^(1/3), y=V/xz=2^(2/3)·V^(1/3)
   if (!hasFixed && withMax.length === 0) {
-    const k = Math.cbrt(6 * V)
-    consider([k / 2, k, k / 3])
+    const k = Math.cbrt(V / 2)
+    consider([k, 2 ** (2 / 3) * Math.cbrt(V), k])
   } else {
     // enumerar subconjuntos de max ativos
     for (let mask = 0; mask < 1 << withMax.length; mask++) {
@@ -146,6 +147,10 @@ export function solve(input: SolveInput): SolveResult {
         dims[i] = minimize1D(fObj, lo, hi)
         dims[j] = V / (dims[i] * known)
         consider([...dims] as Dims)
+      } else if (f.length === 3) {
+        // caso fechado com maxes presentes: se violar algum max, os casos com clamp o cobrem
+        const k = Math.cbrt(V / 2)
+        consider([k, 2 ** (2 / 3) * Math.cbrt(V), k])
       }
     }
   }

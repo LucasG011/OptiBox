@@ -8,7 +8,7 @@ import './App.css'
 
 export default function App() {
   const [ui, setUi] = useState<UiState>(initialUi)
-  const [result, setResult] = useState<SolveResult | null>(null)
+  const [result, setResult] = useState<SolveResult | null>(() => solve(toSolveInput(initialUi)))
 
   const recalc = (next: UiState) => {
     setUi(next)
