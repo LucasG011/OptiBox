@@ -24,11 +24,11 @@ export default function App() {
         <p className="mt-1 text-sm text-stone-500">Dimensões ótimas de caixa com o mínimo de papelão</p>
       </header>
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="flex flex-col gap-6">
+        <div className="flex min-w-0 flex-col gap-6">
           <Controls ui={ui} onChange={recalc} />
           <Results result={result} />
         </div>
-        <div className="flex flex-col gap-6">
+        <div className="flex min-w-0 flex-col gap-6">
           {result?.feasible && (
             <>
               <div className="h-96 overflow-hidden rounded-xl border border-stone-200 shadow-sm">

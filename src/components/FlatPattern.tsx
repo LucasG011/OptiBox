@@ -50,7 +50,7 @@ export function FlatPattern({ result }: { result: SolveResult }) {
           <text x={100 + pad - 2} y={H * s + 21} textAnchor="end">x={x} · y={y} · z={z} cm</text>
         </g>
       </svg>
-      <figcaption>Planificado RSC — linhas tracejadas indicam dobras; cotas em cm.</figcaption>
+      <figcaption className="mt-3 text-xs text-stone-500">Planificado RSC — linhas tracejadas indicam dobras; cotas em cm.</figcaption>
     </figure>
   )
 }
