@@ -1,51 +1,56 @@
 import type { SolveResult } from '../lib/solver'
 
-// Net RSC: corpo = 4 painéis [z, x, z, x] de altura y, abas (largura dos painéis,
-// profundidade x/2) no topo e na base; dobras tracejadas; cotas em cm.
+// Net RSC: corpo = 4 painéis [z, x, z, x] de altura y; abas de profundidade x/2 (nos
+// painéis z) e z/2 (nos painéis x) no topo e na base. Desenho normalizado (maior lado = 100)
+// para que traços, tracejados e fontes tenham espessura constante em qualquer escala.
 export function FlatPattern({ result }: { result: SolveResult }) {
   const { x, y, z } = result
   const panels = [z, x, z, x]
   const W = panels.reduce((a, b) => a + b, 0)
-  const H = y + Math.max(x, z)
-  const pad = Math.max(W, H) * 0.15
-  const vb = `${-pad} ${-pad} ${W + 2 * pad} ${H + 2 * pad + 18}`
-  const stroke = '#333'
+  const flapMax = Math.max(x, z) / 2
+  const H = y + 2 * flapMax
+  const s = 100 / Math.max(W, H)
+  const pad = 14
+  const vb = `${-pad} ${-pad} ${100 + 2 * pad} ${H * s + 2 * pad + 16}`
+  const fill = '#e8c39e'
+  const fillFlap = '#f0d9c0'
 
   let cx = 0
-  const panelRects = panels.map((w, i) => {
-    const isZ = i % 2 === 0 // painéis z: abas de profundidade x/2; painéis x: z/2
-    const fd = isZ ? x / 2 : z / 2
-    const el = (
-      <g key={i}>
-        <rect x={cx} y={0} width={w} height={y} fill="#e8c39e" stroke={stroke} />
-        <rect x={cx} y={-fd} width={w} height={fd} fill="#f0d9c0" stroke={stroke} />
-        <rect x={cx} y={y} width={w} height={fd} fill="#f0d9c0" stroke={stroke} />
-        {/* dobras */}
-        <line x1={cx} y1={0} x2={cx + w} y2={0} stroke={stroke} strokeDasharray="4 3" />
-        <line x1={cx} y1={y} x2={cx + w} y2={y} stroke={stroke} strokeDasharray="4 3" />
-        {i > 0 && <line x1={cx} y1={-Math.max(x, z) / 2} x2={cx} y2={y + Math.max(x, z) / 2} stroke={stroke} strokeDasharray="4 3" />}
-      </g>
-    )
+  const shapes: React.ReactNode[] = []
+  const folds: React.ReactNode[] = []
+  const dims: React.ReactNode[] = []
+  panels.forEach((w, i) => {
+    const fd = i % 2 === 0 ? x / 2 : z / 2
+    shapes.push(<rect key={`b${i}`} x={cx} y={0} width={w} height={y} fill={fill} />)
+    shapes.push(<rect key={`t${i}`} x={cx} y={-fd} width={w} height={fd} fill={fillFlap} />)
+    shapes.push(<rect key={`bo${i}`} x={cx} y={y} width={w} height={fd} fill={fillFlap} />)
+    folds.push(<line key={`f${i}t`} x1={cx} y1={0} x2={cx + w} y2={0} />)
+    folds.push(<line key={`f${i}b`} x1={cx} y1={y} x2={cx + w} y2={y} />)
+    if (i > 0) folds.push(<line key={`v${i}`} x1={cx} y1={-flapMax} x2={cx} y2={y + flapMax} />)
+    dims.push(<text key={`d${i}`} x={(cx + w / 2) * s} y={H * s + 5} textAnchor="middle">{w === x ? 'x' : 'z'}</text>)
     cx += w
-    return el
   })
 
   return (
     <figure>
       <svg viewBox={vb} width="100%" role="img" aria-label="Planificado da caixa">
-        {panelRects}
-        {/* cotas */}
-        <text x={0} y={y / 2} fontSize={Math.min(z, y) * 0.35} textAnchor="middle" dominantBaseline="middle">z</text>
-        <text x={z} y={y / 2} fontSize={Math.min(x, y) * 0.35} textAnchor="middle" dominantBaseline="middle">x</text>
-        <text x={2 * z + x} y={y / 2} fontSize={Math.min(z, y) * 0.35} textAnchor="middle" dominantBaseline="middle">z</text>
-        <text x={W - x / 2} y={y / 2} fontSize={Math.min(x, y) * 0.35} textAnchor="middle" dominantBaseline="middle">x</text>
-        <text x={z + x / 2} y={H + 2} fontSize={Math.min(x, y) * 0.35} textAnchor="middle" dominantBaseline="hanging">y={y} cm</text>
-        <text x={2} y={-Math.max(x, z) / 2 + 1} fontSize={Math.min(x, y) * 0.35} dominantBaseline="hanging">abas: {x / 2} e {z / 2} cm</text>
-        <text x={W} y={H + 14} fontSize={Math.min(x, y) * 0.35} textAnchor="end">
-          x={x} · y={y} · z={z} cm
-        </text>
+        <g transform={`scale(${s})`}>
+          {shapes}
+          <rect x={0} y={-flapMax} width={W} height={y + 2 * flapMax} fill="none" stroke="#333" strokeWidth={0.4 / s} />
+          <g stroke="#333" strokeWidth={0.4 / s} strokeDasharray={`${1.4 / s} ${1 / s}`}>
+            {folds}
+          </g>
+        </g>
+        {/* cotas de profundidade de aba (lado esquerdo) */}
+        <g fontSize="6" fill="#333">
+          <text x={-2} y={(-x / 4) * s} textAnchor="end" dominantBaseline="middle">{x / 2}</text>
+          <text x={-2} y={(y + z / 4) * s} textAnchor="end" dominantBaseline="middle">{z / 2}</text>
+          {dims}
+          <text x={(z + x / 2) * s} y={H * s + 13} textAnchor="middle">y = {y} cm</text>
+          <text x={100 + pad - 2} y={H * s + 21} textAnchor="end">x={x} · y={y} · z={z} cm</text>
+        </g>
       </svg>
-      <figcaption>Planificado RSC — linhas tracejadas indicam dobras.</figcaption>
+      <figcaption>Planificado RSC — linhas tracejadas indicam dobras; cotas em cm.</figcaption>
     </figure>
   )
 }
