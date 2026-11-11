@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { solve, type SolveInput, type SolveResult } from './lib/solver'
 import { Controls, initialUi, toSolveInput, type UiState } from './components/Controls'
 import { Results } from './components/Results'
+import { Box3D } from './components/Box3D'
 import './App.css'
 
 export default function App() {
@@ -19,6 +20,11 @@ export default function App() {
       <h1>OptiBox</h1>
       <Controls ui={ui} onChange={recalc} />
       <Results result={result} />
+      {result?.feasible && (
+        <section style={{ height: 400 }}>
+          <Box3D result={result} />
+        </section>
+      )}
     </main>
   )
 }
