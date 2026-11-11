@@ -4,21 +4,21 @@ import { solve } from './solver'
 const near = (a: number, b: number, tol = 0.15) => Math.abs(a - b) <= tol
 
 describe('solve', () => {
-  it('sem restrições retorna ótimo RSC (x=y/4=z/2)', () => {
+  it('sem restrições retorna ótimo RSC (x=y/2, z=y/3)', () => {
     const r = solve({ volume: 1000 })
     expect(r.feasible).toBe(true)
-    expect(near(r.x, 5)).toBe(true)
-    expect(near(r.y, 20, 1)).toBe(true)
-    expect(near(r.z, 10, 0.5)).toBe(true)
-    expect(near(r.x * r.y * r.z, 1000, 5)).toBe(true)
+    expect(near(r.y, 18.2, 0.5)).toBe(true)
+    expect(near(r.x, 9.1, 0.5)).toBe(true)
+    expect(near(r.z, 6.1, 0.5)).toBe(true)
+    expect(near(r.x * r.y * r.z, 1000, 15)).toBe(true)
   })
 
   it('dimensão fixa respeitada', () => {
     const r = solve({ volume: 1000, y: { fixed: 5 } })
     expect(r.y).toBe(5)
-    expect(near(r.x, 10, 0.5)).toBe(true)
-    expect(near(r.z, 20, 1)).toBe(true)
-    expect(near(r.x * r.y * r.z, 1000, 5)).toBe(true)
+    expect(near(r.x, 14.1, 0.5)).toBe(true)
+    expect(near(r.z, 14.1, 0.5)).toBe(true)
+    expect(near(r.x * r.y * r.z, 1000, 15)).toBe(true)
   })
 
   it('ativa restrição máxima', () => {
@@ -54,7 +54,7 @@ describe('solve', () => {
 
   it('área e custo coerentes com RSC', () => {
     const r = solve({ volume: 1000 })
-    const areaCm2 = 2 * (r.x + r.z) * r.y + 2 * r.x * r.y
+    const areaCm2 = 2 * (r.x + r.z) * r.y + 4 * r.x * r.z
     expect(near(r.areaCm2, areaCm2, 1)).toBe(true)
     expect(near(r.areaM2, areaCm2 / 1e4, 1e-4)).toBe(true)
     expect(near(r.cost, r.areaM2 * 8.5, 1e-4)).toBe(true)

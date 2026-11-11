@@ -1,7 +1,7 @@
 import { MATERIAL_COST_PER_M2 } from './config'
 
-// ponytail: área de abas simplificada (slotted, abas encontram no centro) = 2*x*y;
-// upgrade: geometria real RSC quando houver especificação de máquina
+// Abas RSC reais: 4 abas topo + 4 base, pares que se encontram no centro → área de abas = 4xz
+const areaCm2Of = ([x, y, z]: Dims) => 2 * (x + z) * y + 4 * x * z
 export interface AxisConstraint {
   fixed?: number
   max?: number
@@ -26,8 +26,6 @@ export interface SolveResult {
 }
 
 type Dims = [number, number, number]
-
-const areaCm2Of = ([x, y, z]: Dims) => 2 * (x + z) * y + 2 * x * y
 
 const infeasible = (message: string): SolveResult => ({
   x: 0, y: 0, z: 0, areaCm2: 0, areaM2: 0, cost: 0, feasible: false, message,
@@ -108,10 +106,10 @@ export function solve(input: SolveInput): SolveResult {
     if (a < bestArea) { bestArea = a; best = dims }
   }
 
-  // caso fechado: nenhum clamp, sem fixed → x=∛(V/8), y=4x, z=2x (mínimo de 2y(2x+z))
+  // caso fechado: nenhum clamp, sem fixed → mínimo de 2(x+z)y+4xz: y=k, x=k/2, z=k/3, k=∛(6V)
   if (!hasFixed && withMax.length === 0) {
-    const x = Math.cbrt(V / 8)
-    consider([x, 4 * x, 2 * x])
+    const k = Math.cbrt(6 * V)
+    consider([k / 2, k, k / 3])
   } else {
     // enumerar subconjuntos de max ativos
     for (let mask = 0; mask < 1 << withMax.length; mask++) {

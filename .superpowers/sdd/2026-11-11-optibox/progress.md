@@ -6,3 +6,5 @@ Task 2: Ruling: plano tinha contradicao interna (teste "cubo" vs area RSC com ab
 Task 2: Ruling: formula de abas 2xy e simplificacao (slotted, abas encontram no centro); ponytail na doc do codigo.
 Task 2: complete (commits +solver, tests: npx vitest run -> 7/7 pass)
 Task 3: complete (commit, build ok; verificacao manual de UI adiada para T5 via browser)
+Task 4: complete (commit, build ok; verificacao visual via browser em T5)
+Task 5: Ruling: formula de abas do plano (2xy) era geometricamente inconsistente com o net RSC desenhado; adotada area real 2(x+z)y+4xz, optimo fechado x=k/2,y=k,z=k/3, k=cbrt(6V) — custo se errado: custo/area otimistas.

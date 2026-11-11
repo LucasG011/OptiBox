@@ -4,7 +4,7 @@ import type { SolveResult } from '../lib/solver'
 
 export function Box3D({ result }: { result: SolveResult }) {
   const { x, y, z } = result
-  const dist = 2.5 * Math.max(x, y, z)
+  const dist = 4 * Math.max(x, y, z)
   return (
     <Canvas camera={{ position: [dist * 0.8, dist * 0.7, dist * 0.8], fov: 40 }}>
       <ambientLight intensity={0.6} />
