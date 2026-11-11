@@ -1,5 +1,0 @@
-main { max-width: 720px; margin: 0 auto; padding: 1rem; font-family: system-ui, sans-serif; }
-table { border-collapse: collapse; margin: 0.5rem 0; }
-td, th { border: 1px solid #ccc; padding: 0.3rem 0.6rem; }
-label { display: flex; gap: 0.5rem; align-items: center; }
-input, select { padding: 0.25rem; }

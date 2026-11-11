@@ -4,7 +4,6 @@ import { Controls, initialUi, toSolveInput, type UiState } from './components/Co
 import { Results } from './components/Results'
 import { Box3D } from './components/Box3D'
 import { FlatPattern } from './components/FlatPattern'
-import './App.css'
 
 export default function App() {
   const [ui, setUi] = useState<UiState>(initialUi)
@@ -17,18 +16,31 @@ export default function App() {
   }
 
   return (
-    <main>
-      <h1>OptiBox</h1>
-      <Controls ui={ui} onChange={recalc} />
-      <Results result={result} />
-      {result?.feasible && (
-        <>
-          <section style={{ height: 400 }}>
-            <Box3D result={result} />
-          </section>
-          <FlatPattern result={result} />
-        </>
-      )}
+    <main className="mx-auto max-w-5xl px-4 py-8">
+      <header className="mb-8">
+        <h1 className="text-2xl font-semibold tracking-tight text-stone-800">
+          Opti<span className="text-amber-600">Box</span>
+        </h1>
+        <p className="mt-1 text-sm text-stone-500">Dimensões ótimas de caixa com o mínimo de papelão</p>
+      </header>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="flex flex-col gap-6">
+          <Controls ui={ui} onChange={recalc} />
+          <Results result={result} />
+        </div>
+        <div className="flex flex-col gap-6">
+          {result?.feasible && (
+            <>
+              <div className="h-96 overflow-hidden rounded-xl border border-stone-200 shadow-sm">
+                <Box3D result={result} />
+              </div>
+              <div className="rounded-xl border border-stone-200 p-5 shadow-sm">
+                <FlatPattern result={result} />
+              </div>
+            </>
+          )}
+        </div>
+      </div>
     </main>
   )
 }
