@@ -4,8 +4,10 @@ import { Controls, initialUi, toSolveInput, type UiState } from './components/Co
 import { Results } from './components/Results'
 import { Box3D } from './components/Box3D'
 import { FlatPattern } from './components/FlatPattern'
+import { SplashScreen } from './components/SplashScreen'
 
 export default function App() {
+  const [showSplash, setShowSplash] = useState(true)
   const [ui, setUi] = useState<UiState>(initialUi)
   const [result, setResult] = useState<SolveResult | null>(() => solve(toSolveInput(initialUi)))
 
@@ -13,6 +15,14 @@ export default function App() {
     setUi(next)
     const input: SolveInput = toSolveInput(next)
     setResult(Number.isFinite(input.volume) && next.volume.trim() !== '' ? solve(input) : null)
+  }
+
+  const handleSplashComplete = () => {
+    setShowSplash(false)
+  }
+
+  if (showSplash) {
+    return <SplashScreen onComplete={handleSplashComplete} />
   }
 
   return (
