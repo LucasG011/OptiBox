@@ -9,12 +9,15 @@ import { SplashScreen } from './components/SplashScreen'
 export default function App() {
   const [showSplash, setShowSplash] = useState(true)
   const [ui, setUi] = useState<UiState>(initialUi)
-  const [result, setResult] = useState<SolveResult | null>(() => solve(toSolveInput(initialUi)))
+  const [result, setResult] = useState<SolveResult | null>(null)
 
-  const recalc = (next: UiState) => {
+  const handleUiChange = (next: UiState) => {
     setUi(next)
-    const input: SolveInput = toSolveInput(next)
-    setResult(Number.isFinite(input.volume) && next.volume.trim() !== '' ? solve(input) : null)
+  }
+
+  const handleCalculate = () => {
+    const input: SolveInput = toSolveInput(ui)
+    setResult(Number.isFinite(input.volume) && ui.volume.trim() !== '' ? solve(input) : null)
   }
 
   const handleSplashComplete = () => {
@@ -35,7 +38,7 @@ export default function App() {
       </header>
       <div className="grid gap-6 lg:grid-cols-2">
         <div className="flex min-w-0 flex-col gap-6">
-          <Controls ui={ui} onChange={recalc} />
+          <Controls ui={ui} onChange={handleUiChange} onCalculate={handleCalculate} />
           <Results result={result} />
         </div>
         <div className="flex min-w-0 flex-col gap-6">

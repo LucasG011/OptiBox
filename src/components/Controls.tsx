@@ -38,8 +38,15 @@ export function Card({ title, children }: { title?: string; children: ReactNode 
   )
 }
 
-export function Controls({ ui, onChange }: { ui: UiState; onChange: (ui: UiState) => void }) {
+export interface ControlsProps {
+  ui: UiState
+  onChange: (ui: UiState) => void
+  onCalculate: () => void
+}
+
+export function Controls({ ui, onChange, onCalculate }: ControlsProps) {
   const set = (patch: Partial<UiState>) => onChange({ ...ui, ...patch })
+
   return (
     <Card title="Parâmetros">
       <label className="mb-4 block text-sm text-stone-600">
@@ -55,8 +62,11 @@ export function Controls({ ui, onChange }: { ui: UiState; onChange: (ui: UiState
       <div className="space-y-3">
         {AXES.map((a) => (
           <div key={a} className="grid grid-cols-[2.5rem_1fr_1fr] items-center gap-3">
-            <span className="font-medium text-stone-700">{a.toUpperCase()}</span>
+            <label htmlFor={`mode-${a}`} className="font-medium text-stone-700">
+              {a.toUpperCase()}
+            </label>
             <select
+              id={`mode-${a}`}
               className="rounded-lg border border-stone-300 bg-white px-2 py-1.5 text-sm text-stone-700 focus:border-amber-500 focus:ring-2 focus:ring-amber-500/30 focus:outline-none"
               value={ui.modes[a]}
               onChange={(e) => set({ modes: { ...ui.modes, [a]: e.target.value as Mode } })}
@@ -65,7 +75,11 @@ export function Controls({ ui, onChange }: { ui: UiState; onChange: (ui: UiState
               <option value="fixa">Fixa</option>
               <option value="maxima">Máxima</option>
             </select>
+            <label htmlFor={`value-${a}`} className="sr-only">
+              Valor {a.toUpperCase()}
+            </label>
             <input
+              id={`value-${a}`}
               type="number"
               min="0"
               disabled={ui.modes[a] === 'livre'}
@@ -77,6 +91,13 @@ export function Controls({ ui, onChange }: { ui: UiState; onChange: (ui: UiState
         ))}
       </div>
       <p className="mt-3 text-xs text-stone-500">Restrições por eixo: fixa (valor exato) ou máxima (limite).</p>
+      <button
+        type="button"
+        onClick={onCalculate}
+        className="mt-4 w-full rounded-lg bg-amber-600 px-4 py-2 text-sm font-semibold text-white hover:bg-amber-700 focus:ring-2 focus:ring-amber-500/30 focus:outline-none transition-colors"
+      >
+        Calcular
+      </button>
     </Card>
   )
 }
