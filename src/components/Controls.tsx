@@ -31,7 +31,7 @@ export function toSolveInput(ui: UiState): SolveInput {
 
 export function Card({ title, children }: { title?: string; children: ReactNode }) {
   return (
-    <section className="rounded-xl border border-stone-200 bg-white p-5 shadow-sm">
+    <section className="rounded-xl border border-stone-200 bg-amber-100 p-5 shadow-sm">
       {title && <h2 className="mb-4 text-sm font-semibold uppercase tracking-wide text-stone-500">{title}</h2>}
       {children}
     </section>
