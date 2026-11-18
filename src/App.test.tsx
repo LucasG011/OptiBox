@@ -16,7 +16,7 @@ describe('App', () => {
     }, { timeout: 5000 })
   })
 
-  it('calculates result only when Calcular button is clicked', async () => {
+  it('shows initial result after splash, recalculates on button click', async () => {
     render(<App />)
 
     // Wait for splash to disappear
@@ -24,14 +24,18 @@ describe('App', () => {
       expect(screen.getByText('Parâmetros')).toBeInTheDocument()
     }, { timeout: 5000 })
 
-    // Initially no result displayed (Box3D/FlatPattern not rendered)
-    expect(screen.queryByText('Área de papelão')).not.toBeInTheDocument()
+    // Initial result should be displayed (from initialUi values)
+    expect(screen.getByText('Área de papelão')).toBeInTheDocument()
 
-    // Click Calcular button
+    // Change volume input
+    const volumeInput = screen.getByLabelText('Volume (cm³)')
+    fireEvent.change(volumeInput, { target: { value: '2000' } })
+
+    // Click Calcular button to recalculate
     const calculateButton = screen.getByRole('button', { name: /calcular/i })
     fireEvent.click(calculateButton)
 
-    // Result should appear
+    // Result should still be displayed (updated)
     await waitFor(() => {
       expect(screen.getByText('Área de papelão')).toBeInTheDocument()
     }, { timeout: 1000 })

@@ -9,7 +9,10 @@ import { SplashScreen } from './components/SplashScreen'
 export default function App() {
   const [showSplash, setShowSplash] = useState(true)
   const [ui, setUi] = useState<UiState>(initialUi)
-  const [result, setResult] = useState<SolveResult | null>(null)
+  const [result, setResult] = useState<SolveResult | null>(() => {
+    const input = toSolveInput(initialUi)
+    return Number.isFinite(input.volume) && initialUi.volume.trim() !== '' ? solve(input) : null
+  })
 
   const handleUiChange = (next: UiState) => {
     setUi(next)
